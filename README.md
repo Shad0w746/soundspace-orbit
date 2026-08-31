@@ -68,6 +68,26 @@ The generated app is written to:
 dist\SoundSpace Orbit.exe
 ```
 
+## Package a Website Download
+
+Create a versioned ZIP for website distribution:
+
+```powershell
+.\scripts\package-website-download.ps1
+```
+
+To rebuild the executable first:
+
+```powershell
+.\scripts\package-website-download.ps1 -Build
+```
+
+The package is written to `website-downloads\` and includes the Windows app, readme, suggested website copy, and SHA-256 checksums.
+
+## Website Card Assets
+
+Website thumbnail and card copy live in `website-assets\`.
+
 ## Release Checklist
 
 1. Update `VERSION`.

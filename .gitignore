@@ -21,6 +21,7 @@ downloads/
 temp/
 test-assets/
 local-test/
+website-downloads/
 *.log
 
 # OS/editor
