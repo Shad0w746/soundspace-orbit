@@ -138,11 +138,36 @@ class SoundSpaceOrbitApp:
         panel.grid(row=1, column=0, sticky="nsew")
         panel.columnconfigure(1, weight=1)
 
-        self._add_entry_row(panel, 0, "Source", self.source, "Browse", self._choose_file)
+        self._add_entry_row(
+            panel,
+            0,
+            "Source",
+            self.source,
+            "Browse",
+            self._choose_file,
+            "Use a local audio file path or paste a public audio URL.",
+        )
         self._add_entry_row(panel, 1, "Destination", self.output_dir, "Choose", self._choose_output_dir)
 
+        self.convert_button = Button(
+            panel,
+            text="CREATE 8D AUDIO",
+            command=self._start_conversion,
+            bg=PINK,
+            fg="#fff7fd",
+            activebackground=CYAN,
+            activeforeground="#031015",
+            disabledforeground="#637789",
+            relief="flat",
+            bd=0,
+            cursor="hand2",
+            font=("Segoe UI Semibold", 16),
+            pady=16,
+        )
+        self.convert_button.grid(row=2, column=0, columnspan=3, sticky="ew", pady=(22, 0))
+
         settings = Frame(panel, bg=PANEL)
-        settings.grid(row=2, column=0, columnspan=3, sticky="ew", pady=(22, 0))
+        settings.grid(row=3, column=0, columnspan=3, sticky="ew", pady=(22, 0))
         settings.columnconfigure(0, weight=1)
         settings.columnconfigure(1, weight=1)
 
@@ -162,27 +187,10 @@ class SoundSpaceOrbitApp:
             font=("Segoe UI", 11),
             bd=0,
             highlightthickness=0,
-        ).grid(row=4, column=0, columnspan=3, sticky="w", pady=(18, 0))
-
-        self.convert_button = Button(
-            panel,
-            text="Create 8D Orbit Mix",
-            command=self._start_conversion,
-            bg=CYAN,
-            fg="#031015",
-            activebackground=SUCCESS,
-            activeforeground="#031015",
-            disabledforeground="#637789",
-            relief="flat",
-            bd=0,
-            cursor="hand2",
-            font=("Segoe UI Semibold", 13),
-            pady=13,
-        )
-        self.convert_button.grid(row=5, column=0, columnspan=3, sticky="ew", pady=(26, 0))
+        ).grid(row=5, column=0, columnspan=3, sticky="w", pady=(14, 0))
 
         status_bar = Frame(panel, bg=PANEL_2, padx=14, pady=12)
-        status_bar.grid(row=6, column=0, columnspan=3, sticky="ew", pady=(20, 0))
+        status_bar.grid(row=6, column=0, columnspan=3, sticky="ew", pady=(16, 0))
         status_bar.columnconfigure(1, weight=1)
 
         self.status_light = Canvas(status_bar, width=15, height=15, bg=PANEL_2, bd=0, highlightthickness=0)
@@ -209,6 +217,7 @@ class SoundSpaceOrbitApp:
         variable: StringVar,
         button_text: str,
         command,
+        hint_text: str | None = None,
     ) -> None:
         Label(
             parent,
@@ -218,8 +227,12 @@ class SoundSpaceOrbitApp:
             font=("Segoe UI Semibold", 10),
         ).grid(row=row, column=0, sticky="w", pady=(0 if row == 0 else 14, 0))
 
+        input_stack = Frame(parent, bg=PANEL)
+        input_stack.grid(row=row, column=1, sticky="ew", padx=(18, 10), pady=(0 if row == 0 else 14, 0))
+        input_stack.columnconfigure(0, weight=1)
+
         entry = Entry(
-            parent,
+            input_stack,
             textvariable=variable,
             bg=FIELD,
             fg=TEXT,
@@ -231,7 +244,16 @@ class SoundSpaceOrbitApp:
             highlightthickness=1,
             font=("Segoe UI", 11),
         )
-        entry.grid(row=row, column=1, sticky="ew", padx=(18, 10), ipady=10, pady=(0 if row == 0 else 14, 0))
+        entry.grid(row=0, column=0, sticky="ew", ipady=10)
+
+        if hint_text:
+            Label(
+                input_stack,
+                text=hint_text,
+                bg=PANEL,
+                fg=BLUE,
+                font=("Segoe UI", 9),
+            ).grid(row=1, column=0, sticky="w", pady=(6, 0))
 
         self._secondary_button(parent, button_text, command).grid(
             row=row,
@@ -307,7 +329,7 @@ class SoundSpaceOrbitApp:
 
     def _build_depth_control(self, parent: Frame) -> None:
         depth_panel = Frame(parent, bg=PANEL_2, padx=16, pady=14, highlightbackground="#182a45", highlightthickness=1)
-        depth_panel.grid(row=3, column=0, columnspan=3, sticky="ew", pady=(22, 0))
+        depth_panel.grid(row=4, column=0, columnspan=3, sticky="ew", pady=(22, 0))
         depth_panel.columnconfigure(1, weight=1)
 
         Label(depth_panel, text="Pan depth", bg=PANEL_2, fg=MUTED, font=("Segoe UI Semibold", 10)).grid(
@@ -446,9 +468,9 @@ class SoundSpaceOrbitApp:
         self._working = working
         self.convert_button.configure(
             state="disabled" if working else "normal",
-            text="Orbiting..." if working else "Create 8D Orbit Mix",
-            bg="#27334a" if working else CYAN,
-            fg="#7f92a8" if working else "#031015",
+            text="ORBITING..." if working else "CREATE 8D AUDIO",
+            bg="#27334a" if working else PINK,
+            fg="#7f92a8" if working else "#fff7fd",
         )
 
     def _convert(self) -> None:

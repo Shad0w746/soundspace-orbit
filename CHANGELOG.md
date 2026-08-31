@@ -2,6 +2,11 @@
 
 All notable changes to SoundSpace Orbit will be tracked here.
 
+## 0.2.1 - 2026-08-31
+
+- Made the primary create action more obvious and moved it higher in the desktop layout.
+- Added a source-field hint that local audio files and public audio URLs are both supported.
+
 ## 0.2.0 - 2026-08-31
 
 - Reworked the desktop app into a darker new-age tech interface.
