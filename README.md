@@ -1,6 +1,6 @@
 # SoundSpace Orbit
 
-Current version: **0.1.1**
+Current version: **0.2.0**
 
 SoundSpace Orbit is a planned standalone desktop app for turning local audio files or supported web audio URLs into an "8D" style listening experience.
 
@@ -15,13 +15,14 @@ Versioning is intentionally visible in a few places:
 - `CHANGELOG.md` records what changed in each version.
 - Git tags should use `vX.Y.Z`, starting with `v0.1.0`.
 
-## Version 0.1.1
+## Version 0.2.0
 
 - Import local audio files such as MP3, WAV, FLAC, M4A, and AAC.
 - Accept supported public web audio URLs.
 - Convert mono or stereo input into a moving stereo output.
 - Export processed audio as MP3 or WAV.
 - Provide simple controls for pan speed, pan depth, and optional reverb.
+- Present a new dark tech-themed desktop interface with an animated orbit accent.
 - Run through either a desktop app or command-line interface.
 
 ## Quick Start

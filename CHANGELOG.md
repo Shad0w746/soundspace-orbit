@@ -2,6 +2,12 @@
 
 All notable changes to SoundSpace Orbit will be tracked here.
 
+## 0.2.0 - 2026-08-31
+
+- Reworked the desktop app into a darker new-age tech interface.
+- Added an animated stereo orbit visual in the header.
+- Added stronger visual hierarchy, segmented output controls, depth percentage display, and styled status feedback.
+
 ## 0.1.1 - 2026-08-31
 
 - Added direct audio URL routing so links ending in common audio extensions can go straight through FFmpeg.
