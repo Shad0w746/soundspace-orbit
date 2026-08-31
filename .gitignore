@@ -16,8 +16,10 @@ dist/
 
 # App output
 output/
+output-*/
 downloads/
 temp/
+test-assets/
 *.log
 
 # OS/editor
