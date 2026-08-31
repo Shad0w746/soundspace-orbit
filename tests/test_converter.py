@@ -2,7 +2,14 @@ from pathlib import Path
 
 import pytest
 
-from soundspace_orbit.converter import OrbitSettings, _build_filter_graph, _safe_filename, is_url
+from soundspace_orbit.converter import (
+    OrbitSettings,
+    _build_filter_graph,
+    _display_name_from_url,
+    _looks_like_direct_audio_url,
+    _safe_filename,
+    is_url,
+)
 from soundspace_orbit.version import __version__
 
 
@@ -29,6 +36,13 @@ def test_filter_graph_exposes_orbit_output_label():
 def test_url_detection():
     assert is_url("https://example.com/audio.mp3")
     assert not is_url(str(Path("track.mp3")))
+
+
+def test_direct_audio_url_detection():
+    url = "https://example.com/folder/My%20Track.wav?download=1"
+
+    assert _looks_like_direct_audio_url(url)
+    assert _display_name_from_url(url) == "My Track"
 
 
 @pytest.mark.parametrize(

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "soundspace-orbit"
-version = "0.1.0"
+version = "0.1.1"
 description = "Standalone 8D-style audio converter for local files and supported web audio URLs."
 readme = "README.md"
 requires-python = ">=3.10"

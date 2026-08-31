@@ -7,12 +7,13 @@ import re
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 
 from .ffmpeg import run_ffmpeg
 
 
 SUPPORTED_FORMATS = {"mp3", "wav"}
+DIRECT_AUDIO_EXTENSIONS = {".aac", ".aiff", ".alac", ".flac", ".m4a", ".mp3", ".ogg", ".opus", ".wav", ".wma"}
 
 
 @dataclass(frozen=True)
@@ -73,23 +74,35 @@ def convert_to_8d(source: str, output_dir: Path | str, settings: OrbitSettings |
 
     with tempfile.TemporaryDirectory(prefix="soundspace-orbit-") as temp_name:
         temp_dir = Path(temp_name)
-        input_path, display_name = _resolve_source(clean_source, temp_dir)
+        input_path, display_name, fallback_url = _resolve_source(clean_source, temp_dir)
         output_path = _next_output_path(output_root, display_name, active_settings.output_format)
-        _run_orbit_filter(input_path, output_path, active_settings)
+        try:
+            _run_orbit_filter(input_path, output_path, active_settings)
+        except RuntimeError:
+            if not fallback_url:
+                raise
+            if output_path.exists():
+                output_path.unlink()
+            downloaded_path, display_name = _download_url(fallback_url, temp_dir)
+            output_path = _next_output_path(output_root, display_name, active_settings.output_format)
+            _run_orbit_filter(downloaded_path, output_path, active_settings)
 
     return ConversionResult(source=clean_source, output_path=output_path, settings=active_settings)
 
 
-def _resolve_source(source: str, temp_dir: Path) -> tuple[Path, str]:
+def _resolve_source(source: str, temp_dir: Path) -> tuple[Path | str, str, str | None]:
     if is_url(source):
-        return _download_url(source, temp_dir)
+        if _looks_like_direct_audio_url(source):
+            return source, _display_name_from_url(source), source
+        downloaded_path, display_name = _download_url(source, temp_dir)
+        return downloaded_path, display_name, None
 
     input_path = Path(source).expanduser().resolve()
     if not input_path.exists():
         raise FileNotFoundError(f"Input file does not exist: {input_path}")
     if not input_path.is_file():
         raise ValueError(f"Input path is not a file: {input_path}")
-    return input_path, input_path.stem
+    return input_path, input_path.stem, None
 
 
 def _download_url(url: str, temp_dir: Path) -> tuple[Path, str]:
@@ -125,7 +138,7 @@ def _download_url(url: str, temp_dir: Path) -> tuple[Path, str]:
         return downloaded, title
 
 
-def _run_orbit_filter(input_path: Path, output_path: Path, settings: OrbitSettings) -> None:
+def _run_orbit_filter(input_path: Path | str, output_path: Path, settings: OrbitSettings) -> None:
     filter_graph = _build_filter_graph(settings)
 
     args = [
@@ -186,3 +199,13 @@ def _safe_filename(value: str) -> str:
     cleaned = re.sub(r"[^\w .()-]+", "_", value, flags=re.ASCII).strip(" ._")
     cleaned = re.sub(r"\s+", " ", cleaned)
     return cleaned[:80] or "audio"
+
+
+def _looks_like_direct_audio_url(url: str) -> bool:
+    suffix = Path(urlparse(url).path).suffix.lower()
+    return suffix in DIRECT_AUDIO_EXTENSIONS
+
+
+def _display_name_from_url(url: str) -> str:
+    stem = unquote(Path(urlparse(url).path).stem)
+    return stem or "web-audio"

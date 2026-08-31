@@ -2,6 +2,11 @@
 
 All notable changes to SoundSpace Orbit will be tracked here.
 
+## 0.1.1 - 2026-08-31
+
+- Added direct audio URL routing so links ending in common audio extensions can go straight through FFmpeg.
+- Kept `yt-dlp` as the fallback for supported web pages and platform URLs.
+
 ## 0.1.0 - 2026-08-31
 
 - Added the first working conversion core.
